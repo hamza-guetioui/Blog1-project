@@ -1,0 +1,44 @@
+.ais-SearchBox  {
+  @apply z-50
+}
+.ais-SearchBox-form {
+  @apply flex justify-center items-center;
+}
+.ais-SearchBox-form {
+  @apply relative w-full px-4 lg:px-10;
+}
+.ais-SearchBox-form input[type="search"] {
+  @apply bg-[#F4F4F4] rounded-md h-10 w-full  rounded-tr-full rounded-br-full outline-0 order-2;
+}
+.ais-SearchBox button[type="submit"] {
+  @apply bg-[#F4F4F4] rounded-tl-full rounded-bl-full px-3  h-10 w-10 text-2xl order-1;
+}
+.ais-SearchBox button[type="reset"] {
+  @apply absolute right-6 top-1/2 -translate-y-1/2 h-10 w-10;
+}
+.ais-SearchBox-form input[type="search"]::-webkit-search-cancel-button {
+  display: none;
+}
+.ais-Highlight-highlighted {
+  background-color: orange; /* Set the background color to orange */
+  /* color: white;              Optional: Change text color for better contrast */
+}
+.ais-Hits {
+@apply  z-50 max-sm:absolute max-sm:top-full max-sm:max-h-[70vh] max-sm:left-1/2 max-sm:-translate-x-1/2 w-full px-4 py-6  max-sm:rounded-xl max-sm:bg-slate-50 overflow-y-scroll
+}
+.ais-Hits-list {
+@apply flex flex-col gap-2;
+}
+/* scroll bar style */
+.ais-Hits::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ais-Hits::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1b6;
+  border-radius: 4px;
+}
+
+.ais-Hits::-webkit-scrollbar-track {
+  background-color: #f4f4f4c2;
+}

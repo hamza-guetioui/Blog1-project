@@ -7,7 +7,7 @@ import Container from "@/components/container";
 import { useData } from "./dataContext";
 
 const Posts = () => {
-  const { limit, observerRef } = useObservate(1);
+  const { limit, observerRef } = useObservate(3);
   const { data, loading, error } = useFetch({ limit });
   const { displayData: posts, handelData } = useData();
 
@@ -20,7 +20,7 @@ const Posts = () => {
   }, [handelData, data]);
 
   return (
-    <Container className="grid grid-cols-1 gap-4 w-full mt-4">
+    <Container className="grid grid-cols-3 gap-4 w-full mt-4">
       {posts != undefined &&
         posts.map((post) => {
           return <Post key={post._id} post={post} />;

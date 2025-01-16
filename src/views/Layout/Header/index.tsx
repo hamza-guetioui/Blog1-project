@@ -2,10 +2,9 @@ import React from "react";
 import Image from "next/image";
 
 import Navbar from "./navbar";
-import Navigation from "./navbar/navigation";
+import Navigation from "./navigation";
 import Search from "./search";
 import Link from "next/link";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBookmark,
@@ -21,6 +20,7 @@ const Index = () => {
         </Navbar>
         <Search />
         <Save />
+
       </div>
     </header>
   );

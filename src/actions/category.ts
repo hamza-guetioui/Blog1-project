@@ -10,12 +10,7 @@ const CATEGORIES_QUERY = `*[_type == "category"] {
   image
 }`;
 
-export const GET_CATEGORIES = async () => {
-  return await client.fetch(CATEGORIES_QUERY);
+export const GET_CATEGORIES = async () : Promise<ICategory[]> => {
+  return await client.fetch({query:CATEGORIES_QUERY});
 };
-export const getCategories = async (
-  CATEGORIES_QUERY: string
-): Promise<ICategory[]> => {
-  const response = await client.fetch(CATEGORIES_QUERY);
-  return response;
-};
+

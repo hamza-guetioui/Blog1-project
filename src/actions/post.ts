@@ -64,13 +64,20 @@ const DEFAULT_POSTS_QUERY = `*[_type == "post"]{
 export const GET_POSTS = async (
   query: string = DEFAULT_POSTS_QUERY
 ): Promise<IRecipe[]> => {
-  const response = await client.fetch(query);
+  return await client.fetch({
+    query,
+    config: {
+      cache: "force-cache",
+      next: { revalidate: 60 },
+    },
+  });
 
-  return response;
+  // return response as IRecipe[];
 };
 
 export const GET_POST = async (slug: string): Promise<IRecipe> => {
-  return await client.fetch(`*[_type == "post" && slug.current == $slug][0]{
+  return await client.fetch({
+    query: `*[_type == "post" && slug.current == $slug][0]{
   _id,
   name,
   title,
@@ -127,7 +134,9 @@ export const GET_POST = async (slug: string): Promise<IRecipe> => {
   likesCount,
   dislikesCount,
   author
-}`, {
-    slug: slug, // Replace with the actual slug of the post you want to fetch
+}`,
+    params: {
+      slug: slug, // Replace with the actual slug of the post you want to fetch
+    },
   });
 };

@@ -7,7 +7,7 @@ type Menu = {
   export const mainMenu: Menu[] = [
     { id: 3, name: "Home",  link: "/" },
     { id: 1, name: "Categories",  link: "/categories" },
-    { id: 2, name: "Collections",  link: "/collections" },
+    // { id: 2, name: "Collections",  link: "/collections" },
     { id: 4, name: "Recipes",  link: "/#recipes" },
   ];
   

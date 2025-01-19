@@ -1,21 +1,20 @@
 import { type SchemaTypeDefinition } from "sanity";
 
 import { blockContentType } from "./blockContentType";
+
+import { post } from "./post";
 import { category } from "./category";
 import { collection } from "./collection";
-import { post } from "./post";
-import { author } from "./author";
-import { user } from "./user";
-import { cuisine } from "./cuisine";
-import { mealType } from "./mealType";
 import { tag } from "./tag";
+import { author } from "./author";
+import { cuisine } from "./cuisine";
 import { tool } from "./tool";
-import { dietaryRestriction } from "./dietaryRestriction";
+import { mealType } from "./mealType";
+import { dietary } from "./dietary";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
     author,
-    user,
     post,
     category,
     collection,
@@ -23,7 +22,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     mealType,
     tag, 
     tool,
-    dietaryRestriction,
+    dietary,
    
     blockContentType,
   ],

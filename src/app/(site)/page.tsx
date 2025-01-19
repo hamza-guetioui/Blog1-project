@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
       <SEO data={seo.home} />
-      <main >
+      <main className="flex flex-col items-center">
         <HomePage />
       </main>
     </>

@@ -9,7 +9,12 @@ export const tag = defineType({
       name: "name",
       title: "Name",
       type: "string",
-      description: "Enter the name of the tag (e.g., 'Vegan', 'Gluten-Free')."
+      validation: (Rule) =>
+        Rule.required()
+          .min(3)
+          .max(50)
+          .regex(/^[A-Za-z0-9\s,.'-]*$/, "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."),
+      description: "Enter the name of the tag (e.g., 'Vegan', 'Gluten-Free').",
     }),
     defineField({
       name: "slug",
@@ -18,13 +23,15 @@ export const tag = defineType({
       options: {
         source: "name", // Automatically generates the slug from the 'name' field
       },
-      description: "The URL-friendly version of the tag name, generated automatically."
+      validation: (Rule) => Rule.required(),
+      description: "The URL-friendly version of the tag name, generated automatically.",
     }),
     defineField({
       name: "description",
       title: "Description",
       type: "text",
-      description: "Provide a brief description of the tag (e.g., 'This tag identifies vegan-friendly recipes')."
+      validation: (Rule) => Rule.max(300),
+      description: "Provide a brief description of the tag (e.g., 'This tag identifies vegan-friendly recipes').",
     }),
     defineField({
       name: "image",
@@ -49,7 +56,13 @@ export const tag = defineType({
           description: "Describe the image for accessibility purposes.",
         }),
       ],
-      description: "Upload an image to represent the tag (e.g., an icon or relevant image)."
+      description: "Upload an image to represent the tag (e.g., an icon or relevant image).",
     }),
   ],
+  preview: {
+    select: {
+      title: "name",
+      subtitle: "description",
+    },
+  },
 });

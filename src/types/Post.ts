@@ -1,5 +1,3 @@
-// import { PortableTextBlock } from '@sanity/block-content-to-react';
-
 export interface BlockContent {
   _key: string;
   _type: string;

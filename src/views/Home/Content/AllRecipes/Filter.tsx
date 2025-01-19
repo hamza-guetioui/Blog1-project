@@ -77,10 +77,10 @@ const ScreenCover = ({
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
-    <div
+    <button
       className={`${isOpen ? "fixed" : "hidden"} top-0 left-0 w-full h-full z-10 `}
       onClick={() => setIsOpen(false)}
-    ></div>
+    ></button>
   );
 };
 

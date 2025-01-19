@@ -9,7 +9,7 @@ import Categories from "./Content/Categories";
 
 const Index = async () => {
   return (
-    <Container className="grid lg:grid-cols-12 gap-8 max-w-7xl ml-16 mx-8">
+    <Container className="grid lg:grid-cols-12 gap-8 w-full grid-cols-1 lg:max-w-7xl ml-16 mx-8">
       <Container className="col-span-9 my-8">
         <RecipeHighlights />
         <Categories />

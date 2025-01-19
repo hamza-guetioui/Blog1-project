@@ -34,10 +34,34 @@ export const post = defineType({
       title: "Recipe Name",
       description: "The name of the recipe",
       validation: (Rule) =>
-        Rule.required().regex(
-          /^[A-Za-z][A-Za-z0-9\s,'&-:;]*$/,
-          "Only letters, numbers, spaces, commas, hyphens, and apostrophes are allowed."
-        ),
+        Rule.required()
+          .min(3)
+          .max(50)
+          .regex(
+            /^[A-Za-z][A-Za-z0-9\s,'&-:;]*$/,
+            "Only letters, numbers, spaces, commas, hyphens, and apostrophes are allowed."
+          )
+          .custom(async (value, context) => {
+            if (!value) return true; // Skip validation if the field is empty (handled by .required())
+
+            const { document, getClient } = context;
+            const client = getClient({ apiVersion: "2023-05-01" }); // Use the appropriate API version
+
+            // Query to check if a post with the same name already exists
+            const query = `*[_type == "post" && name == $name && !(_id in [$currentId])]`;
+            const params = {
+              name: value,
+              currentId: document?._id || "", // Exclude the current document during updates
+            };
+
+            const result = await client.fetch(query, params);
+
+            if (result.length > 0) {
+              return `A post with the name "${value}" already exists. Please choose a unique name.`;
+            }
+
+            return true; // Name is unique
+          }),
       group: "info",
     }),
     // Recipe Title
@@ -47,10 +71,13 @@ export const post = defineType({
       title: "Recipe Title",
       description: "The title of the recipe (e.g., Moroccan Chicken Tagine).",
       validation: (Rule) =>
-        Rule.required().regex(
-          /^[A-Za-z][A-Za-z0-9\s,'&-:;]*$/,
-          "Only letters, numbers, spaces, commas, hyphens, and apostrophes are allowed."
-        ),
+        Rule.required()
+          .min(5)
+          .max(100)
+          .regex(
+            /^[A-Za-z][A-Za-z0-9\s,'&-:;]*$/,
+            "Only letters, numbers, spaces, commas, hyphens, and apostrophes are allowed."
+          ),
       group: "info",
     }),
     // Recipe Slug
@@ -73,7 +100,8 @@ export const post = defineType({
       type: "text",
       validation: (Rule) =>
         Rule.required()
-          .min(20)
+          .min(10)
+          .max(100)
           .regex(
             /^[A-Za-z0-9\s,.'-:()?!’]*$/,
             "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
@@ -93,11 +121,11 @@ export const post = defineType({
       fields: [
         defineField({
           name: "alt",
-          title: "Alternative Text",
+          title: "Image alt",
           type: "string",
           validation: (Rule) =>
             Rule.required()
-              .min(10)
+              .min(1)
               .max(100)
               .regex(
                 /^[A-Za-z0-9\s,.'-:]*$/,
@@ -116,7 +144,6 @@ export const post = defineType({
       to: { type: "category" },
       description: "Add a category to this post.",
       validation: (rule) => rule.required(),
-
       group: "info",
     }),
     // Recipe Tags
@@ -125,6 +152,7 @@ export const post = defineType({
       title: "Tags",
       type: "array",
       of: [defineArrayMember({ type: "reference", to: { type: "tag" } })],
+      validation: (Rule) => Rule.min(1),
       description: "Add tags to this post.",
       group: "info",
     }),
@@ -141,7 +169,9 @@ export const post = defineType({
           type: "array",
           title: "Introduction",
           of: [{ type: "block" }],
-          validation: (Rule) => Rule.required(),
+          validation: (Rule) =>
+            Rule.required().min(1).error("An introduction is required."),
+          description: "Write an introduction to the recipe.",
         }),
         // Recipe Content Image
         defineField({
@@ -155,18 +185,20 @@ export const post = defineType({
           fields: [
             defineField({
               name: "alt",
-              title: "Alternative Text",
+              title: "Alt",
               type: "string",
               validation: (Rule) =>
                 Rule.required()
-                  .min(10)
+                  .min(1)
                   .max(100)
                   .regex(
                     /^[A-Za-z0-9\s,.'-:]*$/,
                     "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
                   ),
+              description: "Describe the image for accessibility purposes.",
             }),
           ],
+          description: "Upload an image related to the recipe.",
         }),
         // Recipe Ingredients
         defineField({
@@ -183,7 +215,15 @@ export const post = defineType({
                   name: "name",
                   type: "string",
                   title: "Ingredient Name",
-                  validation: (rule) => rule.required().min(1).max(100),
+                  validation: (rule) =>
+                    rule
+                      .required()
+                      .min(3)
+                      .max(100)
+                      .regex(
+                        /^[A-Za-z0-9\s,.'-:]*$/,
+                        "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
+                      ),
                   description: "The name of the ingredient (e.g., 'Flour').",
                 }),
                 defineField({
@@ -192,7 +232,13 @@ export const post = defineType({
                   title: "Ingredient Description",
                   description:
                     "An optional description or note for the ingredient.",
-                  validation: (rule) => rule.max(200),
+                  validation: (rule) =>
+                    rule
+                      .max(200)
+                      .regex(
+                        /^[A-Za-z0-9\s,.'-:]*$/,
+                        "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
+                      ),
                 }),
               ],
             }),
@@ -216,34 +262,42 @@ export const post = defineType({
                   title: "Step Title",
                   description: "Title of the step",
                   validation: (Rule) =>
-                    Rule.required().regex(
-                      /^[A-Za-z][A-Za-z0-9\s,'-]*$/,
-                      "Only letters, numbers, spaces, commas, hyphens, and apostrophes are allowed."
-                    ),
+                    Rule.required()
+                      .min(3)
+                      .max(100)
+                      .regex(
+                        /^[A-Za-z0-9\s,.'-:]*$/,
+                        "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
+                      ),
                 }),
-
                 defineField({
                   name: "description",
                   title: "Step Description",
                   type: "array",
                   of: [{ type: "block" }],
-                  validation: (rule) => rule.required(),
+                  validation: (rule) => rule.required().min(1),
                   description: "The main instruction for this step.",
                 }),
-                // Recipe Step Note
                 defineField({
                   name: "note",
                   title: "Step Note",
                   type: "string",
                   description:
                     "Optional additional information or tips for this step.",
+                  validation: (rule) =>
+                    rule
+                      .max(200)
+                      .regex(
+                        /^[A-Za-z0-9\s,.'-:]*$/,
+                        "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
+                      ),
                 }),
               ],
             }),
           ],
           validation: (rule) => rule.required().min(1), // At least one step is required
         }),
-        // Recipe Imortant Highlights
+        // Recipe Important Highlights
         defineField({
           name: "highlights",
           title: "Important Highlights",
@@ -258,7 +312,15 @@ export const post = defineType({
                   name: "title",
                   title: "Title",
                   type: "string",
-                  validation: (rule) => rule.required().min(3),
+                  validation: (rule) =>
+                    rule
+                      .required()
+                      .min(3)
+                      .max(100)
+                      .regex(
+                        /^[A-Za-z0-9\s,.'-:]*$/,
+                        "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
+                      ),
                 }),
                 defineField({
                   name: "details",
@@ -271,9 +333,9 @@ export const post = defineType({
               ],
             }),
           ],
-          validation: (rule) => rule.required().min(1),
+          validation: (rule) => rule.required().min(1), // At least one highlight is required
         }),
-        // Recipe Nutrients 
+        // Recipe Nutrients
         defineField({
           name: "nutrients",
           title: "Nutrients",
@@ -284,35 +346,35 @@ export const post = defineType({
               name: "calories",
               title: "Calories (kcal)",
               type: "number",
-              validation: (rule) => rule.required().min(0),
+              validation: (rule) => rule.required().min(0).integer(),
               description: "Total calories per serving in kilocalories (kcal).",
             }),
             defineField({
               name: "fat",
               title: "Fat (g)",
               type: "number",
-              validation: (rule) => rule.required().min(0),
+              validation: (rule) => rule.required().min(0).integer(),
               description: "Amount of fat per serving in grams (g).",
             }),
             defineField({
               name: "carbohydrates",
               title: "Carbohydrates (g)",
               type: "number",
-              validation: (rule) => rule.required().min(0),
+              validation: (rule) => rule.required().min(0).integer(),
               description: "Amount of carbohydrates per serving in grams (g).",
             }),
             defineField({
               name: "protein",
               title: "Protein (g)",
               type: "number",
-              validation: (rule) => rule.required().min(0),
+              validation: (rule) => rule.required().min(0).integer(),
               description: "Amount of protein per serving in grams (g).",
             }),
             defineField({
               name: "sodium",
               title: "Sodium (mg)",
               type: "number",
-              validation: (rule) => rule.required().min(0),
+              validation: (rule) => rule.required().min(0).integer(),
               description: "Amount of sodium per serving in milligrams (mg).",
             }),
           ],
@@ -333,19 +395,34 @@ export const post = defineType({
                   name: "question",
                   title: "Question",
                   type: "string",
-                  validation: (rule) => rule.required().min(5), // Minimum of 5 characters for the question
+                  validation: (rule) =>
+                    rule
+                      .required()
+                      .min(5)
+                      .max(200)
+                      .regex(
+                        /^[A-Za-z0-9\s,.'-:?]*$/,
+                        "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, colons, and question marks are allowed."
+                      ),
                 }),
                 defineField({
                   name: "answer",
                   title: "Answer",
                   type: "string",
-
-                  validation: (rule) => rule.required().min(10), // Minimum of 10 characters for the answer
+                  validation: (rule) =>
+                    rule
+                      .required()
+                      .min(10)
+                      .max(500)
+                      .regex(
+                        /^[A-Za-z0-9\s,.'-:?]*$/,
+                        "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, colons, and question marks are allowed."
+                      ),
                 }),
               ],
             }),
           ],
-          validation: (rule) => rule.required().min(1), // At least one FAQ is required
+          validation: (rule) => rule.required(), // At least one FAQ is required
         }),
       ],
       group: "content",
@@ -377,6 +454,7 @@ export const post = defineType({
                   title: "From",
                   type: "number",
                   validation: (rule) => rule.required().min(1),
+                  description: "Minimum preparation time in minutes.",
                 }),
                 defineField({
                   name: "to",
@@ -384,8 +462,10 @@ export const post = defineType({
                   type: "number",
                   validation: (rule) =>
                     rule.required().min(rule.valueOfField("from")),
+                  description: "Maximum preparation time in minutes.",
                 }),
               ],
+              validation: (Rule) => Rule.required(),
             }),
             // Cooking Time
             defineField({
@@ -399,6 +479,7 @@ export const post = defineType({
                   title: "From",
                   type: "number",
                   validation: (rule) => rule.required().min(1),
+                  description: "Minimum cooking time in minutes.",
                 }),
                 defineField({
                   name: "to",
@@ -406,6 +487,7 @@ export const post = defineType({
                   type: "number",
                   validation: (rule) =>
                     rule.required().min(rule.valueOfField("from")),
+                  description: "Maximum cooking time in minutes.",
                 }),
               ],
               validation: (Rule) => Rule.required(),
@@ -442,7 +524,6 @@ export const post = defineType({
               { title: "Dinner", value: "dinner" },
               { title: "Snack", value: "snack" },
             ],
-            // layout: "tags", // Displays the options as tags for better UX
           },
           validation: (rule) => rule.required().min(1),
           description: "The meal times the recipe can be eaten at.",
@@ -455,12 +536,11 @@ export const post = defineType({
           to: { type: "cuisine" },
           description:
             "The type of cuisine the recipe belongs to, such as Italian, Indian, etc.",
-
           validation: (Rule) => Rule.required(),
         }),
         // Recipe Dietary Restrictions
         defineField({
-          name: "diet",
+          name: "dietary",
           title: "Dietary Restrictions",
           type: "array",
           description:
@@ -468,7 +548,7 @@ export const post = defineType({
           of: [
             defineArrayMember({
               type: "reference",
-              to: { type: "dietaryRestriction" },
+              to: { type: "dietary" },
             }),
           ],
         }),
@@ -512,6 +592,7 @@ export const post = defineType({
               type: "number",
               initialValue: 1,
               validation: (rule) => rule.required().min(1),
+              description: "Minimum number of servings.",
             }),
             defineField({
               name: "maximum",
@@ -519,6 +600,7 @@ export const post = defineType({
               type: "number",
               validation: (rule) =>
                 rule.required().min(rule.valueOfField("minimum")),
+              description: "Maximum number of servings.",
             }),
           ],
           validation: (rule) => rule.required(),
@@ -546,7 +628,6 @@ export const post = defineType({
         "Mark this post as suggested content. Use this to highlight posts that you want to recommend or promote.",
       group: "visibility",
     }),
-
     // Recipe Views
     defineField({
       name: "visits",
@@ -557,7 +638,6 @@ export const post = defineType({
       validation: (Rule) => Rule.required().min(0),
       group: "visibility",
     }),
-
     // Recipe Likes
     defineField({
       name: "likesCount",
@@ -568,7 +648,6 @@ export const post = defineType({
       validation: (Rule) => Rule.required().min(0),
       group: "visibility",
     }),
-
     // Recipe Dislikes
     defineField({
       name: "dislikesCount",
@@ -579,20 +658,36 @@ export const post = defineType({
       validation: (Rule) => Rule.required().min(0),
       group: "visibility",
     }),
-
     // Recipe Author
     defineField({
       name: "author",
-      type: "string",
+      type: "reference",
       title: "Author",
-      initialValue: async (_, context) =>
-        context?.currentUser?.name || "No Author",
-      // to: [{ type: "author" }],
+      to: [{ type: "author" }],
+      initialValue: async (_, context) => {
+        const client = context.getClient({ apiVersion: "2023-01-01" }); // Ensure correct API version
+        const currentUserEmail = context?.currentUser?.email;
+
+        if (currentUserEmail) {
+          // Fetch the matching author from the "author" schema
+          const matchingAuthor = await client.fetch(
+            `*[_type == "author" && email == $email][0]`,
+            { email: currentUserEmail }
+          );
+
+          if (matchingAuthor) {
+            // Return the reference object with _ref only (matches expected type)
+            return { _ref: matchingAuthor._id };
+          }
+        }
+
+        // Return undefined (this will require the user to manually select)
+        return { _ref: undefined }; // This is the correct return for undefined when type expects a Reference or undefined
+      },
       validation: (rule) => rule.required(),
       description: "Select the author of this post.",
       group: "info",
     }),
-
     // SEO Section
     defineField({
       name: "seo",
@@ -609,14 +704,15 @@ export const post = defineType({
       title: "name",
       discription: "description", // Fetch author's name for display
       media: "image",
+      author: "author",
     },
     prepare(selection) {
-      // const { author } = selection;
+      const { author } = selection;
       const { title } = selection;
       return {
         ...selection,
         title: title || "Untitled Post",
-        // subtitle: author ? `by ${author}` : "No author",
+        subtitle: author ? `by ${author}` : "No author",
       };
     },
   },

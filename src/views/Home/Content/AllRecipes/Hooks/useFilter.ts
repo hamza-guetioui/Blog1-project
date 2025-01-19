@@ -1,11 +1,21 @@
 import { IRecipe } from "@/types/Post";
 import { useMemo, useReducer } from "react";
 
+export type Difficulty = "" | "easy" | "medium" | "hard";
+export type UpLoadDate = "All time" | "Last week" | "Last month" | "Last Year";
+export type CookingTime =
+  | "< 10"
+  | "10-15"
+  | "15-30"
+  | "30-60"
+  | "> 60"
+  | "All time";
+
 export type FilterStateTypes = {
   category: string;
-  uploadDate: "All time" | "Last week" | "Last month" | "Last Year";
-  cookingTime: "< 10" | "10-15" | "15-30" | "30-60" | "> 60" | "All time";
-  difficulty: "easy" | "medium" | "hard" | "";
+  uploadDate: UpLoadDate;
+  cookingTime: CookingTime;
+  difficulty: Difficulty;
   calories: {
     from: number;
     to: number;
@@ -19,13 +29,13 @@ export type FilterActionTypes =
   | { type: "SET_CATEGORY"; payload: string }
   | {
       type: "SET_UPLOAD_DATE";
-      payload: "All time" | "Last week" | "Last month" | "Last Year";
+      payload:  UpLoadDate;
     }
   | {
       type: "SET_COOKING_TIME";
-      payload: "< 10" | "10-15" | "15-30" | "30-60" | "> 60" | "All time";
+      payload: CookingTime;
     }
-  | { type: "SET_DIFFICULTY"; payload: "easy" | "medium" | "hard" | "" }
+  | { type: "SET_DIFFICULTY"; payload: Difficulty }
   | { type: "SET_CALORIES"; payload: { from: number; to: number } }
   | { type: "SET_DIETS"; payload: string[] }
   // | { type: "SET_TYPE"; payload: string }
@@ -52,21 +62,21 @@ export const reducer = (
 ): FilterStateTypes => {
   switch (action.type) {
     case "SET_CATEGORY":
-      return { ...state, category: action.payload }; // _id
+      return { ...state, category: action.payload }; 
     case "SET_UPLOAD_DATE":
-      return { ...state, uploadDate: action.payload }; // DAte
+      return { ...state, uploadDate: action.payload }; 
     case "SET_COOKING_TIME":
-      return { ...state, cookingTime: action.payload }; // {from ,to}
+      return { ...state, cookingTime: action.payload };
     case "SET_DIFFICULTY":
-      return { ...state, difficulty: action.payload }; // easy | medium | hard
+      return { ...state, difficulty: action.payload }; 
     case "SET_CALORIES":
-      return { ...state, calories: action.payload }; // {from ,to}
+      return { ...state, calories: action.payload };
     case "SET_DIETS":
-      return { ...state, diets: action.payload }; // string[_i]
+      return { ...state, diets: action.payload }; 
     // case "SET_TYPE":
     //   return { ...state, type: action.payload };
     case "SET_CUISINE":
-      return { ...state, cuisine: action.payload }; // _id
+      return { ...state, cuisine: action.payload }; 
     case "RESET_FILTER":
       return { ...state };
     default:
@@ -98,15 +108,6 @@ const useFilter = ({ data: recipes }: { data: IRecipe[] }) => {
         !state.calories ||
         (recipe.content.nutrients.calories >= state.calories.from &&
           recipe.content.nutrients.calories <= state.calories.to);
-      
-
-      // const matchesPrice =
-      //   item.price >= filterState.priceRange[0] &&
-      //   item.price <= filterState.priceRange[1];
-      // const matchesStock = !filterState.inStock || item.inStock;
-      // const matchesRatings =
-      //   filterState.ratings.length === 0 ||
-      //   state.ratings.includes(item.rating);
 
       return (
         // matchesSearch &&
@@ -129,7 +130,7 @@ const useFilter = ({ data: recipes }: { data: IRecipe[] }) => {
 export default useFilter;
 
 function getDateByPeriod(
-  period: "Last week" | "Last month" | "Last Year" | "All time"
+  period: UpLoadDate
 ): string {
   const currentDate = new Date();
   let targetDate: Date;
@@ -158,7 +159,7 @@ function getDateByPeriod(
   return targetDate.toISOString();
 }
 function getCookingDurition(
-  period: "< 10" | "10-15" | "15-30" | "30-60" | "> 60" | "All time"
+  period:CookingTime
 ): { min: number; max: number } {
   switch (period) {
     case "< 10":

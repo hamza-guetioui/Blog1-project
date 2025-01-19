@@ -9,13 +9,19 @@ export const cuisine = defineType({
       name: "name",
       title: "Name",
       type: "string",
-      description: "Enter the name of the cuisine (e.g., 'Italian', 'Indian')."
+      validation: (Rule) =>
+        Rule.required()
+          .min(3)
+          .max(50)
+          .regex(/^[A-Za-z0-9\s,.'-]*$/, "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."),
+      description: "Enter the name of the cuisine (e.g., 'Italian', 'Indian').",
     }),
     defineField({
       name: "title",
       title: "Title",
       type: "string",
-      description: "A short title for the cuisine, used for display purposes (e.g., 'Traditional Italian Cuisine')."
+      validation: (Rule) => Rule.required().min(3).max(100),
+      description: "A short title for the cuisine, used for display purposes (e.g., 'Traditional Italian Cuisine').",
     }),
     defineField({
       name: "slug",
@@ -24,19 +30,23 @@ export const cuisine = defineType({
       options: {
         source: "name", // Automatically generates the slug from the 'name' field
       },
-      description: "The URL-friendly version of the cuisine name, automatically generated."
+      validation: (Rule) => Rule.required(),
+      description: "The URL-friendly version of the cuisine name, automatically generated.",
     }),
     defineField({
       name: "region",
       title: "Region of Origin",
       type: "string",
-      description: "Specify the region or country where the cuisine originated (e.g., 'Southern Italy', 'North India')."
+      validation: (Rule) =>
+        Rule.required().min(3).max(100).regex(/^[A-Za-z0-9\s,.'-]*$/, "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."),
+      description: "Specify the region or country where the cuisine originated (e.g., 'Southern Italy', 'North India').",
     }),
     defineField({
       name: "description",
       title: "Description",
       type: "text",
-      description: "Provide a brief description of the cuisine (e.g., 'Italian cuisine is known for its pasta, pizza, and rich flavors')."
+      validation: (Rule) => Rule.max(300),
+      description: "Provide a brief description of the cuisine (e.g., 'Italian cuisine is known for its pasta, pizza, and rich flavors').",
     }),
     defineField({
       name: "image",
@@ -48,7 +58,7 @@ export const cuisine = defineType({
       fields: [
         defineField({
           name: "alt",
-          title: "Alt",
+          title: "Alt Text",
           type: "string",
           validation: (Rule) =>
             Rule.required()
@@ -61,7 +71,15 @@ export const cuisine = defineType({
           description: "Describe the image for accessibility purposes.",
         }),
       ],
-      description: "Upload an image that represents the cuisine (e.g., a plate of traditional Italian pasta)."
+      validation: (Rule) => Rule.required(),
+      description: "Upload an image that represents the cuisine (e.g., a plate of traditional Italian pasta).",
     }),
   ],
+  preview: {
+    select: {
+      title: "name",
+      subtitle: "title",
+      media: "image",
+    },
+  },
 });

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const RECENTLY_POSTS_QUERY = `*[_type == "post"]{
+const RECENTLY_POSTS_QUERY = `*[_type == "post"] | order(_createdAt desc)[0...3]{
   _id,
   name,
   title,

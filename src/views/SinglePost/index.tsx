@@ -20,17 +20,19 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import BackTo from "./BachTo";
+import Container from "@/components/container";
 
 const Index = async ({ slug }: { slug: string }) => {
   const post: IRecipe = await GET_POST(slug);
   return (
-    <div className="py-4 flex-col gap-4 px-4 max-w-[50rem] rounded-xl overflow-hidden mt-2 mx-auto shadow-2xl">
-      <Overview className="relative h-52 rounded-xl overflow-hidden">
+    <Container className="grid grid-cols-[50rem_20rem]  gap-4 my-8 max-w-[70rem] ml-40  mx-auto">
+       <Container className=" flex-col gap-4  shadow-2xl   rounded-xl overflow-hidden ">
+      <Container className="relative h-52 rounded-xl overflow-hidden">
         {/* Top Bar */}
-        <Overview className="absolute top-0 left-0 w-full flex items-center justify-between gap-2 px-4 py-3">
+        <Container className="absolute top-0 left-0 w-full flex items-center justify-between gap-2 px-4 py-3">
           <BackTo />
           <Share />
-        </Overview>
+        </Container>
         {/* Cover Image */}
         <Image
           src={urlFor(post.image).toString()}
@@ -40,16 +42,16 @@ const Index = async ({ slug }: { slug: string }) => {
           className="object-cover w-full h-full"
         />
 
-        <Overview
+        <Container
           className="absolute bottom-0 left-0 w-full flex flex-col gap-1 px-3 py-3
                    bg-gradient-to-t from-slate-800  to-transparent "
         >
           <Category category={post.category} />
           <Name name={post.name} />
           <Description description={post.description} />
-        </Overview>
-      </Overview>
-      <Overview className="py-4 flex">
+        </Container>
+      </Container>
+      <Container className="py-4 flex">
         <Container className="flex gap-2 flex-col">
           <Title title={post.title} />
           <Tags tags={post.tags} />
@@ -67,8 +69,8 @@ const Index = async ({ slug }: { slug: string }) => {
             <Tags tags={post.details.type} />
           </Container>
         </Container>
-      </Overview>
-      <Overview className="flex gap-4 py-4 px-2">
+      </Container>
+      <Container className="flex gap-4 py-4 px-2">
         <Container className="w-44 h-44 rounded-[.5rem] overflow-hidden">
           <Image
             src={urlFor(post.image).toString()}
@@ -87,31 +89,26 @@ const Index = async ({ slug }: { slug: string }) => {
             illum. Dolorum, nisi iusto!
           </p>
         </Container>
-      </Overview>
-    </div>
+      </Container>
+    </Container>
+    <Container className="flex flex-col   gap-4 py-4 px-2 items-center w-60 bg-blue-100 rounded-xl h-fit">
+      <div className="w-24 h-24 rounded-full bg-[#F5F5F5] "></div>
+      <h1 className="text-3xl font-[auto] font-bold  text-white">{post.author}</h1>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+         Aperiam similique vero enim  at natus, optio quas.
+      </p>
+
+    </Container>
+    </Container>
+   
   );
 };
 
 export default Index;
 
-const Overview = ({
-  children,
-  className: cn,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return <div className={cn}>{children}</div>;
-};
-const Container = ({
-  children,
-  className: cn,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return <div className={cn}>{children}</div>;
-};
+
+
 
 const Name = ({ name }: { name: string }) => {
   return <h1 className="text-3xl font-[auto] font-bold  text-white">{name}</h1>;

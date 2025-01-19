@@ -13,10 +13,10 @@ const SEO = ({ data, children }: Props) => {
     <Head>
       {/* Basic SEO */}
       <title>{title}</title>
-      {meta.map((item, index) => {
+      {meta.map((item) => {
         if (item.charSet !== undefined)
-          return <meta key={index} charSet={item.charSet} />;
-        return <meta key={index} name={item.name} content={item.content} />;
+          return <meta key={item.charSet} charSet={item.charSet} />;
+        return <meta key={item.name} name={item.name} content={item.content} />;
       })}
 
       {/* Open Graph / Facebook */}
@@ -40,7 +40,7 @@ const SEO = ({ data, children }: Props) => {
     <meta property="twitter:url" content={openGraph.url} />
     <meta property="twitter:card" content={openGraph.card} />
     <meta property="twitter:site" content={openGraph.site} /> */}
-      {children && children}
+      {children}
     </Head>
   );
 };

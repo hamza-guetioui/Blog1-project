@@ -15,6 +15,7 @@ const Index = () => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const { filterState: state, filterDispatch: dispatch } = useData();
 
+
   return (
     <Container className="relative z-30">
       <Trigger isOpen={isOpen} setIsOpen={setIsOpen} />

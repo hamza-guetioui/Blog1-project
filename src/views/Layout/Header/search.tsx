@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import Font
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import "./search.css";
 import Link from "next/link";
+import { IAlgoliaRecipe } from "@/lib/AlgoliaSync";
 
 // Initialize Algolia client with environment variables
 const algoliaClient = algoliasearch(
@@ -38,7 +39,7 @@ const Search = () => {
 
   return (
     <SearchWrapper>
-      <InstantSearch searchClient={algoliaClient} indexName="Categories">
+      <InstantSearch searchClient={algoliaClient} indexName="Recipes">
         <SearchBox onFocus={handleFocus} /> {/* Search input box */}
         {isFocused && ( // Render hits and close overlay if focused
           <>
@@ -56,14 +57,14 @@ export default Search;
 const SearchHit = ({
   hit,
 }: {
-  hit: { name: string; description: string; imageUrl: string }; // Define the structure of a hit
+  hit: IAlgoliaRecipe; // Define the structure of a hit
 }) => {
   return (
-    <Link href={`/categories/${hit.name}`}>
+    <Link href={`/recipes/${hit?.slug?.current}`}>
       <article className="flex justify-center gap-2 max-w-full lg:max-w-[70%] h-28 lg:h-32 border-2 rounded-[6px] border-slate-100">
         <div className="w-1/3 border-2 overflow-hidden rounded-[6px]">
           <Image
-            src={hit.imageUrl} // Image source from the hit
+            src={hit.image} // Image source from the hit
             width={400}
             height={280}
             alt="" // Alt text for accessibility

@@ -40,28 +40,7 @@ export const post = defineType({
           .regex(
             /^[A-Za-z][A-Za-z0-9\s,'&-:;]*$/,
             "Only letters, numbers, spaces, commas, hyphens, and apostrophes are allowed."
-          )
-          .custom(async (value, context) => {
-            if (!value) return true; // Skip validation if the field is empty (handled by .required())
-
-            const { document, getClient } = context;
-            const client = getClient({ apiVersion: "2023-05-01" }); // Use the appropriate API version
-
-            // Query to check if a post with the same name already exists
-            const query = `*[_type == "post" && name == $name && !(_id in [$currentId])]`;
-            const params = {
-              name: value,
-              currentId: document?._id || "", // Exclude the current document during updates
-            };
-
-            const result = await client.fetch(query, params);
-
-            if (result.length > 0) {
-              return `A post with the name "${value}" already exists. Please choose a unique name.`;
-            }
-
-            return true; // Name is unique
-          }),
+          ),
       group: "info",
     }),
     // Recipe Title

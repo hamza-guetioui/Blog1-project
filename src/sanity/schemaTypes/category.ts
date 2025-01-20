@@ -47,34 +47,34 @@ export const category = defineType({
         rule
           .required()
           .min(3)
-          .max(50)
+          .max(20)
           .regex(
             /^[A-Za-z\s'-]+$/,
             "Only letters, spaces, apostrophes, and hyphens are allowed."
           )
           .custom(async (value, context) => {
             if (!value) return true; // Skip validation if the field is empty (handled by .required())
-
+    
             const { document, getClient } = context;
             const client = getClient({ apiVersion: "2023-05-01" }); // Use the appropriate API version
-
+    
             // Query to check if a category with the same name already exists
-            const query = `*[_type == "category" && name == $name && !(_id in [$currentId])]`;
+            const query = `*[_type == "category" && name == $name && _id != $currentId]`;
             const params = {
               name: value,
               currentId: document?._id || "", // Exclude the current document during updates
             };
-
+    
             const result = await client.fetch(query, params);
-
+    
             if (result.length > 0) {
               return `A category with the name "${value}" already exists. Please choose a unique name.`;
             }
-
+    
             return true; // Name is unique
           }),
       description:
-        "Enter the name of the category (e.g., 'Desserts', 'Main Course'). Must be unique and 3-50 characters long.",
+        "Enter the name of the category (e.g., 'Desserts', 'Main Course'). Must be unique and 3-20 characters long.",
     }),
     // Category Title
     defineField({

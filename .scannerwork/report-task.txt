@@ -1,6 +1,0 @@
-projectKey=hamza-guetioui_Blog1-project_ec9f2e99-9c1f-4d27-b6b4-7c2fde4c3cbb
-serverUrl=http://localhost:9000
-serverVersion=10.8.1.101195
-dashboardUrl=http://localhost:9000/dashboard?id=hamza-guetioui_Blog1-project_ec9f2e99-9c1f-4d27-b6b4-7c2fde4c3cbb
-ceTaskId=73c99911-a477-41f1-ba2f-ecbc127b5f91
-ceTaskUrl=http://localhost:9000/api/ce/task?id=73c99911-a477-41f1-ba2f-ecbc127b5f91

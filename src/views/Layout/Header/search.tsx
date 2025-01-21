@@ -60,7 +60,7 @@ const SearchHit = ({
   hit: IAlgoliaRecipe; // Define the structure of a hit
 }) => {
   return (
-    <Link href={`/recipes/${hit?.slug?.current}`}>
+    <Link href={`/recipes/${hit?.slug}`}>
       <article className="flex justify-center gap-2 max-w-full lg:max-w-[70%] h-28 lg:h-32 border-2 rounded-[6px] border-slate-100">
         <div className="w-1/3 border-2 overflow-hidden rounded-[6px]">
           <Image

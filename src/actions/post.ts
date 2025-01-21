@@ -1,142 +1,116 @@
 import { client } from "@/sanity/lib/client";
 import { IRecipe } from "@/types/Post";
 
-const DEFAULT_POSTS_QUERY = `*[_type == "post"]{
-  _id,
-  name,
-  title,
-  slug,
-  description,
-  image,
+interface GetPostsOptions {
+  limit?: number;
+  fields?: string[];
+  params?: string[];
+}
 
-  "category" : category->{
-    _id,
-    name,
-    slug
-  },
+// Fetch Posts
+export const GET_POSTS = async ({
+  limit,
+  fields = [],
+  params = [],
+}: GetPostsOptions = {}): Promise<IRecipe[]> => {
+  // Build query
+  const query = buildPostsQuery({ limit, fields, params });
 
-  "tags": tags[]->{
-    _id,
-    name,
-    "slug": slug.current
-  },
+  try {
+    // Fetch data
+    const response = await client.fetch({
+      query,
+      config: {
+        cache: "force-cache",
+        next: { revalidate: 60 },
+      },
+    });
+    return response as IRecipe[];
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw new Error("Failed to fetch posts");
+  }
+};
+// Single Post
+export const GET_POST = async (
+  slug: string,
+  fields: string[] = []
+): Promise<IRecipe> => {
+  const query = buildPostQuery(fields);
 
-  content,
-  "details": details{
-    time,
-    difficulty,
-    eatIn,
-    "cuisine": cuisine->{
-      _id,
-      name,
-      "slug": slug.current
-    },
-    "diet": diet[]->{
-      _id,
-      name,
-      slug,
-    },
-    "type": type[]->{
-      _id,
-      name,
-      slug,
-    },
-    "tools": tools[]->{
-      _id,
-      name,
-      url,
-      "image": image.asset->{
-        _ref
-      }
-    },
-    yield
-  },
-
-  isTrending,
-  isSuggested,
-  visits,
-  likesCount,
-  dislikesCount,
-  author
-}`;
-
-// Get All Posts
-export const GET_POSTS = async (
-  query: string = DEFAULT_POSTS_QUERY
-): Promise<IRecipe[]> => {
-  return await client.fetch({
-    query,
-    config: {
-      cache: "force-cache",
-      next: { revalidate: 60 },
-    },
-  });
-
-  // return response as IRecipe[];
+  try {
+    const response = await client.fetch({
+      query,
+      params: { slug },
+      config: {
+        cache: "force-cache",
+        next: { revalidate: 60 },
+      },
+    });
+    return response as IRecipe;
+  } catch {
+    throw new Error("Failed to fetch post");
+  }
 };
 
-export const GET_POST = async (slug: string): Promise<IRecipe> => {
-  return await client.fetch({
-    query: `*[_type == "post" && slug.current == $slug][0]{
-  _id,
-  name,
-  title,
-  slug,
-  description,
-  image,
-
-  "category" : category->{
-    _id,
-    name,
-    slug
-  },
-
-  "tags": tags[]->{
-    _id,
-    name,
-    "slug": slug.current
-  },
-
-  content,
-  "details": details{
+const defaultFields = [
+  "_id",
+  "name",
+  "title",
+  '"slug": slug.current',
+  "description",
+  "image",
+  '"category": category->{ _id, name, "slug": slug.current }',
+  '"tags": tags[]->{ _id, name, "slug": slug.current }',
+  "content",
+  `"details": details{
     time,
     difficulty,
     eatIn,
-    "cuisine": cuisine->{
-      _id,
-      name,
-      "slug": slug.current
-    },
-    "diet": diet[]->{
-      _id,
-      name,
-      slug,
-    },
-    "type": type[]->{
-      _id,
-      name,
-      slug,
-    },
-    "tools": tools[]->{
-      _id,
-      name,
-      url,
-      "image": image.asset->{
-        _ref
-      }
-    },
+    "cuisine": cuisine->{ _id, name, "slug": slug.current ,region},
+    "dietaries": dietary[]->{ _id, name, "slug": slug.current, severity },
+    "types": type[]->{ _id, name, "slug": slug.current },
+    "tools": tools[]->{ _id, name, url, image ,description},
     yield
-  },
+  }`,
+  "isTrending",
+  "isSuggested",
+  "visits",
+  "likesCount",
+  "dislikesCount",
+  "author",
+];
 
-  isTrending,
-  isSuggested,
-  visits,
-  likesCount,
-  dislikesCount,
-  author
-}`,
-    params: {
-      slug: slug, // Replace with the actual slug of the post you want to fetch
-    },
-  });
+// Build Query
+const buildPostQuery = (fields: string[] = []): string => {
+  const selectedFields = fields.length > 0 ? fields : defaultFields;
+  return `*[_type == "post" && slug.current == $slug][0]{ ${selectedFields.join(", ")} }`;
+};
+// Build GROQ Query
+const buildPostsQuery = ({
+  limit,
+  fields = [],
+  params,
+}: GetPostsOptions = {}): string => {
+  // Use the provided fields or default to all fields
+  const selectedFields = fields.length > 0 ? fields : defaultFields;
+
+  // Start building the GROQ query
+  let groqQuery = `*[_type == "post"`;
+
+  // Append the custom params if provided
+  if (params && params.length > 0) {
+    groqQuery += ` && ${params.join(" && ")}`; // Join conditions with "&&"
+  }
+  // Close the query and add the fields
+  groqQuery += `]{
+    ${selectedFields.join(",\n")}
+  }`;
+
+  // Add limit if provided
+  if (limit) {
+    groqQuery += `[0...${limit}]`;
+  }
+
+  return groqQuery;
 };

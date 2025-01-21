@@ -1,3 +1,4 @@
+"use client"
 import { IRecipe, IRecipeTime } from "@/types/Post";
 import { useMemo, useReducer } from "react";
 

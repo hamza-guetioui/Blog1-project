@@ -1,3 +1,5 @@
+import { IAuthor } from "./author";
+
 export interface BlockContent {
   _key: string;
   _type: string;
@@ -8,14 +10,10 @@ export interface BlockContent {
     text: string;
   }>;
 }
-export interface ISlug {
-  current: string;
-}
-
 
 export interface IRecipeContent {
   introduction: BlockContent[];
-  image: { asset: { _ref: string }; alt: string }; // Updated type to include potential metadata
+  image: { asset: { _ref: string }; alt: string };
   ingredients: {
     name: string;
     description?: string;
@@ -23,13 +21,13 @@ export interface IRecipeContent {
   steps: {
     title: string;
     description: BlockContent[];
-    note: string;
+    note?: string;
   }[];
-  highlights: {
-    title : string;
+  highlights?: {
+    title: string;
     details: string[];
   };
-  nutrients:  {
+  nutrients: {
     calories: number;
     fat: number;
     carbohydrates: number;
@@ -41,8 +39,6 @@ export interface IRecipeContent {
     answer: string;
   };
 }
-
-
 
 export interface IRecipeTime {
   preparation: {
@@ -57,59 +53,67 @@ export interface IRecipeTime {
 export interface ICuisine {
   _id: string;
   name: string;
-  slug: ISlug;
+  slug: string;
+  region: string;
 }
 export interface ITool {
-  _id: string;  
-  name: string;
-  url: string;
-  image: { asset: { _ref: string }; alt: string };
-}
-export interface IDiet {
   _id: string;
   name: string;
-  slug: ISlug;
+  url?: string;
+  image: { asset: { _ref: string }; alt: string };
+  description?: string;
+}
+type SeverityType = "low" | "medium" | "high";
+
+export interface IDietary {
+  _id: string;
+  name: string;
+  slug: string;
+  severity: SeverityType;
 }
 export interface IType {
   _id: string;
   name: string;
-  slug: ISlug;
+  slug: string;
 }
 export interface IYield {
   minimum: number;
   maximum: number;
 }
+
+type DifficultyType = "easy" | "medium" | "hard";
+type EatInType = "breakfast" | "lunch" | "dinner" | "snack";
 export interface IRecipeDetails {
   time: IRecipeTime;
-  difficulty: "easy" | "medium" | "hard" ;
-  eatIn : string[];
+  difficulty: DifficultyType;
+  eatIn: EatInType[];
   cuisine: ICuisine;
-  tools:  ITool[];
-  diet: IDiet[];
-  type: IType[];
-  yield:IYield;
+  tools: ITool[];
+  dietaries: IDietary[];
+  types: IType[];
+  yield: IYield;
 }
 
 export interface IRecipeCategory {
   _id: string;
-  name : string;
-  slug: ISlug;
+  name: string;
+  slug: string;
 }
 export interface IRecipeTag {
   _id: string;
-  name : string;
-  slug: ISlug;
+  name: string;
+  slug: string;
 }
 
 export interface IRecipe {
   _id: string;
   name: string;
   title: string;
-  slug : ISlug;
+  slug: string;
   description: string;
   image: { asset: { _ref: string }; alt: string };
 
-  category:IRecipeCategory;
+  category: IRecipeCategory;
   tags: IRecipeTag[];
 
   content: IRecipeContent;
@@ -117,10 +121,10 @@ export interface IRecipe {
 
   isTrending: boolean;
   isSuggested: boolean;
-  visits : number;
-  likesCount : number;
-  dislikesCount : number;
-  author: string;
+  visits: number;
+  likesCount: number;
+  dislikesCount: number;
+  author: IAuthor;
   _createdAt: string;
 
   // seo: {

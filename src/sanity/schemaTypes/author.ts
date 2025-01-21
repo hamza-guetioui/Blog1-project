@@ -64,7 +64,7 @@ export const author = defineType({
           lists: [],
         }),
       ],
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().min(10).max(200),
       description: 'A short biography or description of the author.',
     }),
     defineField({

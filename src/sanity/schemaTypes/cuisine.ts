@@ -45,7 +45,7 @@ export const cuisine = defineType({
       name: "description",
       title: "Description",
       type: "text",
-      validation: (Rule) => Rule.max(300),
+      validation: (Rule) => Rule.required().min(10).max(100),
       description: "Provide a brief description of the cuisine (e.g., 'Italian cuisine is known for its pasta, pizza, and rich flavors').",
     }),
     defineField({

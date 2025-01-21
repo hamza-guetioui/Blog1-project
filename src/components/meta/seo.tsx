@@ -7,7 +7,7 @@ type Props = {
   data: ISeo;
 };
 
-const SEO = ({ data, children }: Props) => {
+const Seo = ({ data, children }: Props) => {
   const { title, meta, openGraph } = data;
   return (
     <Head>
@@ -45,4 +45,4 @@ const SEO = ({ data, children }: Props) => {
   );
 };
 
-export default SEO;
+export default Seo;

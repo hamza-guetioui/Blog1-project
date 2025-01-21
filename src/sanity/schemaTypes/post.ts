@@ -38,7 +38,7 @@ export const post = defineType({
           .min(3)
           .max(50)
           .regex(
-            /^[A-Za-z][A-Za-z0-9\s,'&-:;]*$/,
+            /^[A-Za-z0-9\s,.'-:()?!’]*$/,
             "Only letters, numbers, spaces, commas, hyphens, and apostrophes are allowed."
           ),
       group: "info",
@@ -54,7 +54,7 @@ export const post = defineType({
           .min(5)
           .max(100)
           .regex(
-            /^[A-Za-z][A-Za-z0-9\s,'&-:;]*$/,
+              /^[A-Za-z0-9\s,&|.'-:()?!’]*$/,
             "Only letters, numbers, spaces, commas, hyphens, and apostrophes are allowed."
           ),
       group: "info",
@@ -80,7 +80,7 @@ export const post = defineType({
       validation: (Rule) =>
         Rule.required()
           .min(10)
-          .max(100)
+          .max(255)
           .regex(
             /^[A-Za-z0-9\s,.'-:()?!’]*$/,
             "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
@@ -123,6 +123,17 @@ export const post = defineType({
       to: { type: "category" },
       description: "Add a category to this post.",
       validation: (rule) => rule.required(),
+      
+      group: "info",
+    }),
+    // Recipe Collection
+    defineField({
+      name: "collection",
+      title: "Collection",
+      type: "reference",
+      to: { type: "collection" },
+      description:
+        "Choose a collection to categorize this recipe, making it easier to organize and discover within the context of related recipes (e.g., 'Ramadan Specials', 'Holiday Desserts').",
       group: "info",
     }),
     // Recipe Tags
@@ -200,7 +211,7 @@ export const post = defineType({
                       .min(3)
                       .max(100)
                       .regex(
-                        /^[A-Za-z0-9\s,.'-:]*$/,
+                        /^[A-Za-z0-9\s,.'-:()?!’]*$/,
                         "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
                       ),
                   description: "The name of the ingredient (e.g., 'Flour').",
@@ -215,7 +226,7 @@ export const post = defineType({
                     rule
                       .max(200)
                       .regex(
-                        /^[A-Za-z0-9\s,.'-:]*$/,
+                        /^[A-Za-z0-9\s,.'-:()?!’]*$/,
                         "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
                       ),
                 }),
@@ -267,7 +278,7 @@ export const post = defineType({
                     rule
                       .max(200)
                       .regex(
-                        /^[A-Za-z0-9\s,.'-:]*$/,
+                        /^[A-Za-z0-9\s,.'-:()?!’]*$/,
                         "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
                       ),
                 }),
@@ -297,7 +308,7 @@ export const post = defineType({
                       .min(3)
                       .max(100)
                       .regex(
-                        /^[A-Za-z0-9\s,.'-:]*$/,
+                        /^[A-Za-z0-9\s,.'-:()?!’]*$/,
                         "Only letters, numbers, spaces, commas, periods, hyphens, apostrophes, and colons are allowed."
                       ),
                 }),
@@ -432,6 +443,7 @@ export const post = defineType({
                   name: "from",
                   title: "From",
                   type: "number",
+                  initialValue: 1,
                   validation: (rule) => rule.required().min(1),
                   description: "Minimum preparation time in minutes.",
                 }),
@@ -457,7 +469,8 @@ export const post = defineType({
                   name: "from",
                   title: "From",
                   type: "number",
-                  validation: (rule) => rule.required().min(1),
+                  initialValue: 0,
+                  validation: (rule) => rule.required().min(0),
                   description: "Minimum cooking time in minutes.",
                 }),
                 defineField({
@@ -496,6 +509,7 @@ export const post = defineType({
           title: "Eat In",
           type: "array",
           of: [{ type: "string" }],
+          validation: (rule) => rule.required().min(1),
           options: {
             list: [
               { title: "Breakfast", value: "breakfast" },
@@ -504,7 +518,7 @@ export const post = defineType({
               { title: "Snack", value: "snack" },
             ],
           },
-          validation: (rule) => rule.required().min(1),
+
           description: "The meal times the recipe can be eaten at.",
         }),
         // Recipe Cuisine
@@ -515,7 +529,6 @@ export const post = defineType({
           to: { type: "cuisine" },
           description:
             "The type of cuisine the recipe belongs to, such as Italian, Indian, etc.",
-          validation: (Rule) => Rule.required(),
         }),
         // Recipe Dietary Restrictions
         defineField({
@@ -543,7 +556,6 @@ export const post = defineType({
               to: { type: "mealType" },
             }),
           ],
-          validation: (rule) => rule.min(1),
         }),
         // Recipe Tools
         defineField({

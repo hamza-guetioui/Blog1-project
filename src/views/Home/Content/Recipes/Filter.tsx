@@ -5,6 +5,7 @@ import Container from "@/components/container";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { useData } from "./dataContext";
+import { CookingTimeType, DifficultyType, UpLoadDateType } from "./Hooks/useFilter";
 
 type CalorieState = {
   from: number; // Represents the starting value of the range
@@ -20,10 +21,10 @@ const Index = () => {
     <Container className="relative z-30">
       <Trigger isOpen={isOpen} setIsOpen={setIsOpen} />
       <Filters isOpen={isOpen}>
-        <ByUpdateDate
+        <ByUpLoadDate
           state={state.uploadDate}
           dispatch={(
-            value: "All time" | "Last week" | "Last month" | "Last Year"
+            value: UpLoadDateType
           ) => dispatch({ type: "SET_UPLOAD_DATE", payload: value })}
         />
         <ByCookingTime
@@ -40,7 +41,7 @@ const Index = () => {
         /> */}
         <ByDifficulty
           state={state.difficulty}
-          dispatch={(value: "" | "easy" | "medium" | "hard") =>
+          dispatch={(value: DifficultyType) =>
             dispatch({ type: "SET_DIFFICULTY", payload: value })
           }
         />
@@ -114,20 +115,20 @@ const Filters = ({
 }) => {
   return (
     <div
-      className={`${isOpen ? "absolute  top-full right-0" : "hidden"} min-w-[36rem] grid grid-cols-4  gap-2 p-4 mt-1  shadow-xl  bg-slate-100 rounded-xl z-30 `}
+      className={`${isOpen ? "absolute  top-full right-0" : "hidden"} min-w-[21rem] md:min-w-[36rem] max0 grid grid-cols-2 md:grid-cols-4  gap-2 p-4 mt-1  shadow-xl  bg-slate-100 rounded-xl z-30 `}
     >
       {children}
     </div>
   );
 };
 
-const ByUpdateDate = ({
+const ByUpLoadDate = ({
   state,
   dispatch,
 }: {
-  state: "All time" | "Last week" | "Last month" | "Last Year";
+  state: UpLoadDateType;
   dispatch: (
-    value: "All time" | "Last week" | "Last month" | "Last Year"
+    value: UpLoadDateType
   ) => void;
 }) => {
   const periods: ("Last week" | "Last month" | "Last Year" | "All time")[] = [
@@ -157,9 +158,9 @@ const ByCookingTime = ({
   state,
   dispatch,
 }: {
-  state: "All time" | "< 10" | "10-15" | "15-30" | "30-60" | "> 60";
+  state: CookingTimeType;
   dispatch: (
-    value: "All time" | "< 10" | "10-15" | "15-30" | "30-60" | "> 60"
+    value: CookingTimeType
   ) => void;
 }) => {
   const ranges = useRef([
@@ -174,11 +175,11 @@ const ByCookingTime = ({
   return (
     <Option title="by Cooking Duration :">
       <div className="flex flex-col gap-2 justify-start items-start">
-        {ranges?.current.map((range, index) => (
+        {ranges?.current.map((range) => (
           <button
-            key={index}
+            key={range.value}
             className={`${state === range.value ? "text-gray-600" : " "}`}
-            onClick={() => dispatch(range.value as  "All time" | "< 10" | "10-15" | "15-30" | "30-60" | "> 60" )}
+            onClick={() => dispatch(range.value as  CookingTimeType )}
           >
             {range.label}
           </button>
@@ -193,8 +194,8 @@ const ByDifficulty = ({
   state,
   dispatch,
 }: {
-  state: "" | "easy" | "medium" | "hard";
-  dispatch: (value: "" | "easy" | "medium" | "hard") => void;
+  state: DifficultyType;
+  dispatch: (value: DifficultyType) => void;
 }) => {
   const Difficulties = [
     { label: "Easy", value: "easy" },
@@ -206,11 +207,11 @@ const ByDifficulty = ({
   return (
     <Option title="By Difficulty :">
       <div className="flex flex-col gap-2 items-start">
-        {Difficulties.map((difficulty, index) => (
+        {Difficulties.map((difficulty) => (
           <button
-            key={index}
+            key={difficulty.value}
             className={`${state === difficulty.value ? "text-gray-600" : " "}`}
-            onClick={() => dispatch(difficulty.value as "" | "easy" | "medium" | "hard")} // Explicitly casting to the correct type
+            onClick={() => dispatch(difficulty.value as DifficultyType)} // Explicitly casting to the correct type
           >
             {difficulty.label}
           </button>

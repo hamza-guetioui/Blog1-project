@@ -1,11 +1,10 @@
 import React, { forwardRef } from "react";
 
 type ContainerProps = {
-  children: React.ReactNode;
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-const cn = (className?: string) => className || "";
+const cn = (className?: string) => className ?? "";
 
 const Container = forwardRef<
   HTMLDivElement,

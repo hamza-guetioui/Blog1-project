@@ -1,9 +1,10 @@
+"use client"
 import { IRecipe } from "@/types/Post";
 import { useMemo, useReducer } from "react";
 
-export type Difficulty = "" | "easy" | "medium" | "hard";
-export type UpLoadDate = "All time" | "Last week" | "Last month" | "Last Year";
-export type CookingTime =
+export type DifficultyType = "" | "easy" | "medium" | "hard";
+export type UpLoadDateType = "All time" | "Last week" | "Last month" | "Last Year";
+export type CookingTimeType =
   | "< 10"
   | "10-15"
   | "15-30"
@@ -13,9 +14,9 @@ export type CookingTime =
 
 export type FilterStateTypes = {
   category: string;
-  uploadDate: UpLoadDate;
-  cookingTime: CookingTime;
-  difficulty: Difficulty;
+  uploadDate: UpLoadDateType;
+  cookingTime: CookingTimeType;
+  difficulty: DifficultyType;
   calories: {
     from: number;
     to: number;
@@ -29,13 +30,13 @@ export type FilterActionTypes =
   | { type: "SET_CATEGORY"; payload: string }
   | {
       type: "SET_UPLOAD_DATE";
-      payload:  UpLoadDate;
+      payload:  UpLoadDateType;
     }
   | {
       type: "SET_COOKING_TIME";
-      payload: CookingTime;
+      payload: CookingTimeType;
     }
-  | { type: "SET_DIFFICULTY"; payload: Difficulty }
+  | { type: "SET_DIFFICULTY"; payload: DifficultyType }
   | { type: "SET_CALORIES"; payload: { from: number; to: number } }
   | { type: "SET_DIETS"; payload: string[] }
   // | { type: "SET_TYPE"; payload: string }
@@ -89,9 +90,6 @@ const useFilter = ({ data: recipes }: { data: IRecipe[] }) => {
 
   const result = useMemo(() => {
     return recipes.filter((recipe) => {
-      // const matchesSearch = item.name
-      //   .toLowerCase()
-      //   .includes(filterState.searchText.toLowerCase());
       const matchesCategory =
         !state.category || recipe.category._id === state.category;
       const matchesUploadDate =
@@ -130,7 +128,7 @@ const useFilter = ({ data: recipes }: { data: IRecipe[] }) => {
 export default useFilter;
 
 function getDateByPeriod(
-  period: UpLoadDate
+  period: UpLoadDateType
 ): string {
   const currentDate = new Date();
   let targetDate: Date;
@@ -159,7 +157,7 @@ function getDateByPeriod(
   return targetDate.toISOString();
 }
 function getCookingDurition(
-  period:CookingTime
+  period:CookingTimeType
 ): { min: number; max: number } {
   switch (period) {
     case "< 10":

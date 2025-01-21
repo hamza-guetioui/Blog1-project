@@ -52,27 +52,28 @@ export const category = defineType({
             /^[A-Za-z\s'-]+$/,
             "Only letters, spaces, apostrophes, and hyphens are allowed."
           )
-          .custom(async (value, context) => {
-            if (!value) return true; // Skip validation if the field is empty (handled by .required())
+          // .custom(async (value, context) => {
+          //   if (!value) return true; // Skip validation if the field is empty (handled by .required())
     
-            const { document, getClient } = context;
-            const client = getClient({ apiVersion: "2023-05-01" }); // Use the appropriate API version
+          //   const { document, getClient } = context;
+          //   const client = getClient({ apiVersion: "2023-05-01" }); // Use the appropriate API version
     
-            // Query to check if a category with the same name already exists
-            const query = `*[_type == "category" && name == $name && _id != $currentId]`;
-            const params = {
-              name: value,
-              currentId: document?._id || "", // Exclude the current document during updates
-            };
+          //   // Query to check if a category with the same name already exists
+          //   const query = `*[_type == "category" && name == $name && _id != $currentId]`;
+          //   const params = {
+          //     name: value,
+          //     currentId: document?._id || "", // Exclude the current document during updates
+          //   };
     
-            const result = await client.fetch(query, params);
+          //   const result = await client.fetch(query, params);
     
-            if (result.length > 0) {
-              return `A category with the name "${value}" already exists. Please choose a unique name.`;
-            }
+          //   if (result.length > 0) {
+          //     return `A category with the name "${value}" already exists. Please choose a unique name.`;
+          //   }
     
-            return true; // Name is unique
-          }),
+          //   return true; // Name is unique
+          // })
+          ,
       description:
         "Enter the name of the category (e.g., 'Desserts', 'Main Course'). Must be unique and 3-20 characters long.",
     }),
@@ -131,6 +132,7 @@ export const category = defineType({
       options: {
         hotspot: true, // Allows the user to crop and focus on specific parts of the image
       },
+      validation: (rule) => rule.required(),
       fields: [
         defineField({
           name: "alt",
@@ -170,15 +172,30 @@ export const category = defineType({
       name: "isFeatured",
       title: "Is Featured",
       type: "boolean",
-      initialValue: false,
+      initialValue: true,
       description: "Mark this category as featured (e.g., displayed prominently on the website).",
     }),
   ],
   preview: {
     select: {
       title: "name",
-      subtitle: "description",
+      parentCategoryName: "parentCategory.name", // Resolve the parent category name
+      parentCategoryTitle: "parentCategory.title", // Resolve the parent category title
       media: "image",
+    },
+    prepare(selection) {
+      const { title, parentCategoryName, parentCategoryTitle, media } = selection;
+
+      // Construct the subtitle based on whether the category has a parent
+      const subtitle = parentCategoryName
+        ? `Child of: ${parentCategoryName} (${parentCategoryTitle})`
+        : "Top-level category";
+
+      return {
+        title: title,
+        subtitle: subtitle,
+        media: media,
+      };
     },
   },
 });

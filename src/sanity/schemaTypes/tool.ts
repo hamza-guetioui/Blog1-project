@@ -10,7 +10,8 @@ export const tool = defineType({
       name: "name",
       title: "Name",
       type: "string",
-      description: "Enter the name of the tool (e.g., 'Vegan Recipe Finder', 'Recipe Generator').",
+      description:
+        "Enter the name of the tool (e.g., 'Vegan Recipe Finder', 'Recipe Generator').",
       validation: (Rule) =>
         Rule.required()
           .min(3)
@@ -25,19 +26,20 @@ export const tool = defineType({
       name: "url",
       title: "URL",
       type: "string",
-      description: "Enter the URL of the tool (e.g., 'https://www.veganrecipe.com').",
+      description:
+        "Enter the URL of the tool (e.g., 'https://www.veganrecipe.com').",
       validation: (Rule) =>
-        Rule.required()
-          .regex(
-            /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]+)*\/?$/,
-            "Enter a valid URL (e.g., 'https://www.example.com')."
-          ),
+        Rule.regex(
+          /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]+)*\/?$/,
+          "Enter a valid URL (e.g., 'https://www.example.com')."
+        ),
     }),
     // Tool Image
     defineField({
       name: "image",
       title: "Image",
       type: "image",
+      validation: (Rule) => Rule.required(),
       options: {
         hotspot: true, // Allows cropping and focusing on specific parts of the image
       },
@@ -47,8 +49,7 @@ export const tool = defineType({
           title: "Alt",
           type: "string",
           validation: (Rule) =>
-            Rule.required()
-              .min(10)
+            Rule.min(10)
               .max(100)
               .regex(
                 /^[A-Za-z0-9\s,.'-:]*$/,
@@ -57,17 +58,18 @@ export const tool = defineType({
           description: "Describe the image for accessibility purposes.",
         }),
       ],
-      description: "Upload an image to represent the tool (e.g., logo or relevant icon).",
+      description:
+        "Upload an image to represent the tool (e.g., logo or relevant icon).",
     }),
     // Tool Description
     defineField({
       name: "description",
       title: "Description",
       type: "text",
-      description: "Provide a brief description of the tool (e.g., 'This tool helps you find vegan recipes based on your preferences').",
+      description:
+        "Provide a brief description of the tool (e.g., 'This tool helps you find vegan recipes based on your preferences').",
       validation: (Rule) =>
-        Rule.required()
-          .min(10)
+        Rule.min(10)
           .max(300)
           .regex(
             /^[A-Za-z0-9\s,.'-:!?]*$/,

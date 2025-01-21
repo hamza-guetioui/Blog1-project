@@ -1,25 +1,26 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 
 export const useObservate = (initialLimit: number) => {
   const [limit, setLimit] = useState<number>(initialLimit);
   const observerRef = useRef(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          // Check if the element is intersecting the viewport
-          if (entry.isIntersecting) {
-            setLimit((prevLimit) => prevLimit + 1);
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: "10px", // Adjust if needed
-        threshold: 0.5, // Half of the element is visible in the viewport
+  const handleIntersect = (entries: IntersectionObserverEntry[]) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setLimit((prevLimit) => prevLimit + 1);
       }
-    );
+    });
+  };
+  useEffect(() => {
+    const createObserver = () => {
+      return new IntersectionObserver(handleIntersect, {
+        root: null,
+        rootMargin: "10px",
+        threshold: 0.5,
+      });
+    };
+    const observer = createObserver();
 
     // Start observing the element
     const currentElement = observerRef.current;
@@ -33,7 +34,7 @@ export const useObservate = (initialLimit: number) => {
         observer.unobserve(currentElement);
       }
     };
-  }, []);
+  }, [observerRef, setLimit]);
 
   return {
     limit,

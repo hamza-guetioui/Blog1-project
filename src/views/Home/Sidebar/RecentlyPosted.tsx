@@ -6,17 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const RECENTLY_POSTS_QUERY = `*[_type == "post"] | order(_createdAt desc)[0...3]{
-  _id,
-  name,
-  title,
-  slug,
-  description,
-  image,
-}`;
-
 const Index = async () => {
-  const posts: IRecipe[] = await GET_POSTS(RECENTLY_POSTS_QUERY);
+  const posts: IRecipe[] = await GET_POSTS({fields: ['_id','name', '"slug": slug.current', 'description', 'image'],limit:3});
   return (
     <Container>
       <Title>Recently posted</Title>
@@ -43,7 +34,7 @@ const PostsContent = ({ data: posts }: { data: IRecipe[] }) => {
 
 const Post = ({ data: post }: { data: IRecipe }) => {
   return (
-    <Link href={`/recipes/${post.slug.current}`}>
+    <Link href={`/recipes/${post.slug}`}>
       <div className="flex gap-2 my-3 rounded">
         <div className="min-h-4 w-1/4 rounded-[.5rem] overflow-hidden">
           <Image

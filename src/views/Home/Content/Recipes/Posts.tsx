@@ -6,10 +6,13 @@ import Post from "./Post";
 import Container from "@/components/container";
 import { useData } from "./dataContext";
 
+
+
 const Posts = () => {
   const { limit, observerRef } = useObservate(3);
-  const { data, loading, error } = useFetch({ limit });
+  const { data, loading, error } = useFetch({limit});
   const { displayData: posts, handelData } = useData();
+
 
   useEffect(() => {
     if (data) {
@@ -20,16 +23,13 @@ const Posts = () => {
   }, [handelData, data]);
 
   return (
-    <Container className="w-full mt-4">
-      <Container className="grid grid-cols-3 gap-4">
-      {posts != undefined &&
-        posts.map((post) => {
-          return <Post key={post._id} post={post} />;
-        })}
+    <Container className="w-full px-4 mt-4">
+      <Container className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {posts?.map((post) => <Post key={post._id} post={post} />)}
       </Container>
       {/* Red div with the ref */}
-      <Container ref={observerRef} className="h-12">
-        {loading && <StateMessage message="Loading posts..." color="gray" />}
+      <Container ref={observerRef} className="py-8">
+        {loading && <Loading/>}
         {error && (
           <StateMessage
             message={`An error occurred: ${error || "Unable to load posts."}`}
@@ -62,4 +62,7 @@ const StateMessage = ({
   </div>
 );
 
-// Observer hook
+
+const Loading =()=>{
+  return <div className="loader"></div>
+}

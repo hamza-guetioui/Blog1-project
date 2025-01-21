@@ -1,11 +1,16 @@
-import React from 'react'
+import React from "react";
 
-const Title = ({ children }: { children: React.ReactNode }) => {
+type TitleProps = {
+  className?: string;
+} & React.HTMLAttributes<HTMLHeadingElement>;
+
+const cn = (className?: string) => className ?? "";
+
+const Title: React.FC<TitleProps> = ({ className, children, ...rest }) => {
   return (
-    // <div className="flex items-center justify-between ">
-    <h2 className="text-xl text-slate-900 font-bold mb-4 pt-2">{children}</h2>
-    //   <span className="text-sm font-semibold">See all</span>
-    // </div>
+    <h1 className={`text-xl mb-3 font-bold max-md:ml-2 ${cn(className)}`} {...rest}>
+      {children}
+    </h1>
   );
 };
-export default Title
+export default Title;

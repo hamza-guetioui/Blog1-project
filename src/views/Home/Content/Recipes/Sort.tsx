@@ -9,14 +9,15 @@ import { useData } from "./dataContext";
 const Index = () => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const { sortState: state, sortDispatch: dispatch } = useData();
+
   return (
-    <Container className="relative  z-50">
+    <Container className="relative z-50">
       <Trigger isOpen={isOpen} setIsOpen={setIsOpen} />
       <Sorts isOpen={isOpen}>
-        <GroupOptions title={"by date :"}>
+        <GroupOptions title="by date :">
           <Option
-            state={state.NewestFirst}
-            dispatch={() =>
+            isActive={state.NewestFirst}
+            onClick={() =>
               dispatch({
                 type: "SET_NEWEST_FIRST",
                 payload: !state.NewestFirst,
@@ -25,10 +26,9 @@ const Index = () => {
           >
             Newest First
           </Option>
-
           <Option
-            state={state.OldestFirst}
-            dispatch={() =>
+            isActive={state.OldestFirst}
+            onClick={() =>
               dispatch({
                 type: "SET_OLDEST_FIRST",
                 payload: !state.OldestFirst,
@@ -38,49 +38,37 @@ const Index = () => {
             Oldest First
           </Option>
         </GroupOptions>
-        <GroupOptions title={"by popularity :"}>
+        <GroupOptions title="by popularity :">
           <Option
-            state={state.MostViewed}
-            dispatch={() =>
-              dispatch({
-                type: "SET_MOST_VIEWED",
-                payload: !state.MostViewed,
-              })
+            isActive={state.MostViewed}
+            onClick={() =>
+              dispatch({ type: "SET_MOST_VIEWED", payload: !state.MostViewed })
             }
           >
             Most Popular
           </Option>
           <Option
-            state={state.TopRated}
-            dispatch={() =>
-              dispatch({
-                type: "SET_TOP_RATED",
-                payload: !state.TopRated,
-              })
+            isActive={state.TopRated}
+            onClick={() =>
+              dispatch({ type: "SET_TOP_RATED", payload: !state.TopRated })
             }
           >
             Least Popular
           </Option>
         </GroupOptions>
-        <GroupOptions title={"by cooking time :"}>
+        <GroupOptions title="by cooking time :">
           <Option
-            state={state.Quickest}
-            dispatch={() =>
-              dispatch({
-                type: "SET_QUICKEST",
-                payload: !state.Quickest,
-              })
+            isActive={state.Quickest}
+            onClick={() =>
+              dispatch({ type: "SET_QUICKEST", payload: !state.Quickest })
             }
           >
             Quickest
           </Option>
           <Option
-            state={state.Longest}
-            dispatch={() =>
-              dispatch({
-                type: "SET_LONGEST",
-                payload: !state.Longest,
-              })
+            isActive={state.Longest}
+            onClick={() =>
+              dispatch({ type: "SET_LONGEST", payload: !state.Longest })
             }
           >
             Longest
@@ -102,10 +90,10 @@ const ScreenCover = ({
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
-    <div
-      className={`${isOpen ? "fixed" : "hidden"} top-0 left-0 w-full h-full z-20 `}
+    <button
+      className={`${isOpen ? "fixed" : "hidden"} top-0 left-0 w-full h-full z-20`}
       onClick={() => setIsOpen(false)}
-    ></div>
+    />
   );
 };
 
@@ -118,8 +106,10 @@ const Trigger = ({
 }) => {
   return (
     <button
-      className={`${isOpen ? "bg-slate-50/70 text-slate-700" : "bg-transparent"} rounded-full w-8 h-8 flex justify-center items-center`}
-      onClick={() => setIsOpen((isOpen) => !isOpen)}
+      className={`${
+        isOpen ? "bg-slate-50/70 text-slate-700" : "bg-transparent"
+      } rounded-full w-8 h-8 flex justify-center items-center`}
+      onClick={() => setIsOpen((prev) => !prev)}
     >
       <FontAwesomeIcon
         icon={faSort}
@@ -138,7 +128,9 @@ const Sorts = ({
 }) => {
   return (
     <Container
-      className={`${isOpen ? "absolute  top-full left-0" : "hidden"} w-52 p-4 mt-1 shadow-xl  bg-slate-100 rounded-xl `}
+      className={`${
+        isOpen ? "absolute top-full left-0" : "hidden"
+      } w-52 p-4 mt-1 shadow-xl bg-slate-100 rounded-xl`}
     >
       {children}
     </Container>
@@ -153,28 +145,26 @@ const GroupOptions = ({
   children: React.ReactNode;
 }) => {
   return (
-      <div className="min-w-fit mb-3">
-        <h6 className="text-gray-500 text-base mb-2">{title}</h6>
-      <div className="flex flex-col gap-2 items-center">{children}</div>
+    <div className="min-w-fit mb-3">
+      <h6 className="text-gray-800 font-semibold text-base mb-2">{title}</h6>
+      <div className="flex flex-col gap-2 ">{children}</div>
     </div>
   );
 };
 
-
-
 const Option = ({
-  state,
-  dispatch,
+  isActive,
+  onClick,
   children,
 }: {
-  state: boolean;
-  dispatch: () => void;
+  isActive: boolean;
+  onClick: () => void;
   children: React.ReactNode;
 }) => {
   return (
     <button
-      className={`${state ? "text-slate-600" : ""} z-50`}
-      onClick={dispatch}
+      className={`${isActive ? "text-slate-800 underline" : "text-slate-500"} font-semibold z-50`}
+      onClick={onClick}
     >
       {children}
     </button>

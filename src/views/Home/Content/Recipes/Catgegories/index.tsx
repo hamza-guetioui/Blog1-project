@@ -12,7 +12,7 @@ const Categories = async () => {
   const categories: ICategory[] = await GET_CATEGORIES();
 
   return (
-    <Container className="w-full overflow-hidden">
+    <Container className="w-full max-sm:px-2 overflow-hidden">
       <Carousel
         opts={{
           align: "start",

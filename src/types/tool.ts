@@ -1,9 +1,9 @@
-export interface ITag {
+export interface ITool {
     _id: string;
     name: string; 
-    slug:  string; 
+    url?:  string; 
     description: string; 
-    image?: {
+    image: {
       asset: {
         _ref: string; 
         _type: string; 

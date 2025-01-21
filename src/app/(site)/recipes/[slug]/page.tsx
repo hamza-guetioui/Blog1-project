@@ -7,7 +7,7 @@ export async function generateStaticParams() {
   const posts: IRecipe[] = await GET_POSTS();
 
   return posts.map((recipe) => ({
-    slug: recipe?.slug?.current,
+    slug: recipe?.slug,
   }));
 }
 

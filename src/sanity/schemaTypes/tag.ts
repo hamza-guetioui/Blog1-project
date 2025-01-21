@@ -30,7 +30,7 @@ export const tag = defineType({
       name: "description",
       title: "Description",
       type: "text",
-      validation: (Rule) => Rule.max(300),
+      validation: (Rule) => Rule.required().min(10).max(300),
       description: "Provide a brief description of the tag (e.g., 'This tag identifies vegan-friendly recipes').",
     }),
     defineField({
@@ -63,6 +63,7 @@ export const tag = defineType({
     select: {
       title: "name",
       subtitle: "description",
+      media: "image",
     },
   },
 });

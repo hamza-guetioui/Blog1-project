@@ -1,10 +1,12 @@
-export interface ICollection {
+type SeverityType = "low" | "medium" | "high";
+
+export interface IDietary {
   _id: string;
   name: string;
-  title: string;
   slug: string;
   description: string;
-  image: {
+  severity: SeverityType;
+  image?: {
     asset: {
       _ref: string;
     };

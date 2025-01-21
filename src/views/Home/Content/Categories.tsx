@@ -11,6 +11,8 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import { generateBlurDataURL } from "@/utils/blurImage";
+
 
 const Categories = async () => {
   const categories: ICategory[] = await GET_CATEGORIES();
@@ -58,28 +60,77 @@ const Categories = async () => {
 
 export default Categories;
 
-const Category = ({ data: category }: { data: ICategory }) => {
+// const Category = ({ data: category }: { data: ICategory }) => {
+//   // Generate a low-res placeholder (e.g., 10x10 pixels) and encode it as base64
+//   const blurDataURL = "data:image/png;base64,..."; // Replace with your base64-encoded low-res image
+
+//   return (
+//     <Link
+//       href={`/category/${category?.slug}`}
+//       aria-label={`View category: ${category.name}`}
+//     >
+//       <div
+//         className="relative overflow-hidden flex rounded-xl h-28 bg-gradient-to-t from-slate-900/80 to-transparent
+//        shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out group"
+//       >
+//         <Image
+//           src={urlFor(category.image).toString()}
+//           alt={`Image for category: ${category.name}`} // More descriptive alt text
+//           width={600}
+//           height={600}
+//           className="object-cover w-full h-full"
+//           priority={true} // Use only for the first few images in the carousel
+//           placeholder="blur" // Add blur placeholder
+//           blurDataURL={blurDataURL} // Use a base64-encoded low-res image
+//           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Responsive sizes
+//           quality={75} // Reduce image quality for faster loading
+//         />
+//         <div className="absolute bottom-0 left-0 p-4 text-white">
+//           <h3 className="text-xl font-bold group-hover:text-blue-200 transition-colors duration-300">
+//             {category.name}
+//           </h3>
+//           {/* Optional: Add a description if needed */}
+//           {/* <p className="text-sm text-gray-300">{category.description}</p> */}
+//         </div>
+//       </div>
+//     </Link>
+//   );
+// };
+
+
+const Category = async ({ data: category }: { data: ICategory }) => {
+  const blurDataURL = await generateBlurDataURL(urlFor(category.image).toString());
+
   return (
-    <Link href={`/category/${category?.slug}`} key={category._id}>
+    <Link
+      href={`/category/${category?.slug}`}
+      aria-label={`View category: ${category.name}`}
+    >
       <div
         className="relative overflow-hidden flex rounded-xl h-28 bg-gradient-to-t from-slate-900/80 to-transparent
        shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out group"
       >
         <Image
           src={urlFor(category.image).toString()}
-          alt={category.name}
+          alt={`Image for category: ${category.name}`}
           width={600}
           height={600}
           className="object-cover w-full h-full"
+          priority={true}
+          placeholder="blur"
+          blurDataURL={blurDataURL} // Use the generated base64 string
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          quality={75}
         />
         <div className="absolute bottom-0 left-0 p-4 text-white">
           <h3 className="text-xl font-bold group-hover:text-blue-200 transition-colors duration-300">
             {category.name}
           </h3>
-          {/* Optional: Add a description if needed */}
-          {/* <p className="text-sm text-gray-300">{category.description}</p> */}
         </div>
       </div>
     </Link>
   );
 };
+
+
+

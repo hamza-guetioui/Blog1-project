@@ -18,7 +18,7 @@
     "@sanity/assist": "^3.0.9",
     "@sanity/block-content-to-react": "^3.0.0",
     "@sanity/image-url": "^1.1.0",
-    "@sanity/vision": "^3.65.1",
+    "@sanity/vision": "^3.94.2",
     "@shadcn/ui": "^0.0.4",
     "algoliasearch": "^4.24.0",
     "class-variance-authority": "^0.7.1",
